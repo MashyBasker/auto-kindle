@@ -24,10 +24,9 @@ jobs:
       - name: Install dependencies
         run: |
           go version
-          go get -u golang.org/x/lint/golint
-          export PATH="$PATH:$(go env GOPATH)/bin"
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
       - name: Run vet and lint
         run: |
           go vet .
-          golint .
+          golangci-lint run ./...
