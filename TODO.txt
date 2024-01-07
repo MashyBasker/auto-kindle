@@ -1,0 +1,7 @@
+What to do next(in order of priority):
+
+- Add support for visiting the book link and download the file
+- Automate the process of sending book to kindle email account
+- Add TUI support(probably gonna do it!)
+- Add support to get books from sources other than just Zlib.
+- Dockerize it(maybe??)
