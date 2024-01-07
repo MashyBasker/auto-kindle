@@ -8,27 +8,35 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func ScrapeBookNames(keyword string) {
+type Book struct {
+	Name		string
+	Link 		string
+	Author		string
+	Publisher	string
+}
+
+func ScrapeBookNames(keyword string) []Book {
 	c := colly.NewCollector(
 		colly.AllowedDomains("singlelogin.re"),
 	)
-	
+	var books []Book
 	c.OnHTML("div.resItemBoxBooks", func(h *colly.HTMLElement) {
+		var book Book
 		h.ForEach("h3", func (_ int, h3 *colly.HTMLElement)  {
-			text := strings.TrimSpace(h3.Text)
-			fmt.Println("Book name: ", text)
+			bookName := strings.TrimSpace(h3.Text)
 			link := h.ChildAttr("a", "href")
-			fmt.Println("Book link: https://singlelogin.re"+link)
+			book.Name = bookName
+			book.Link = "https://singlelogin.re/"+link
 		})
 		h.ForEach("div.authors", func(_ int, h *colly.HTMLElement) {
-			fmt.Println("Author name: ", h.Text)
+			book.Author = h.Text
 		})
 		h.ForEach("[title=Publisher]", func(_ int, h *colly.HTMLElement) {
 			fmt.Println("Publisher name: ", h.Text)
+			book.Publisher = h.Text
 		})
-		fmt.Println("----------------------------------")
+		books = append(books, book)
 	})
-
 	c.OnError(func(r *colly.Response, err error) {
 		log.Println("Request URL: ", r.Request.URL, " failed with response: ", r, "\nError: ", err)
 	})
@@ -36,5 +44,5 @@ func ScrapeBookNames(keyword string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	return books
 }
